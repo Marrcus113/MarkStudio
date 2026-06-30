@@ -1,0 +1,179 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ae="using:AvaloniaEdit"
+        x:Class="MarkStudio.MainWindow"
+        Title="MarkStudio" Width="1400" Height="800"
+        Background="#2B2B2B" FontFamily="Segoe UI, sans-serif"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" ColumnDefinitions="Auto,250,*">
+
+        <!-- MENU BAR -->
+        <Menu Grid.Row="0" Grid.ColumnSpan="3" Background="#3C3F41" Foreground="#BBBBBB" FontSize="12">
+            <MenuItem Header="Файл">
+                <MenuItem x:Name="MenuNew" Header="Новый файл" InputGesture="Ctrl+N" />
+                <MenuItem x:Name="MenuOpen" Header="Открыть файл..." InputGesture="Ctrl+O" />
+                <MenuItem x:Name="MenuOpenFolder" Header="Открыть папку..." />
+                <Separator />
+                <MenuItem x:Name="MenuSave" Header="Сохранить" InputGesture="Ctrl+S" />
+                <MenuItem x:Name="MenuSaveAs" Header="Сохранить как..." />
+            </MenuItem>
+            <MenuItem Header="Правка">
+                <MenuItem x:Name="MenuUndo" Header="Отменить" InputGesture="Ctrl+Z" />
+                <MenuItem x:Name="MenuRedo" Header="Повторить" InputGesture="Ctrl+Y" />
+                <Separator />
+                <MenuItem x:Name="MenuFind" Header="Найти..." InputGesture="Ctrl+F" />
+                <MenuItem x:Name="MenuReplace" Header="Заменить..." InputGesture="Ctrl+R" />
+            </MenuItem>
+            <MenuItem Header="Вид">
+                <MenuItem x:Name="MenuToggleProject" Header="Панель проекта" InputGesture="Alt+1" />
+                <MenuItem x:Name="MenuToggleTerminal" Header="Терминал" InputGesture="Alt+F12" />
+                <MenuItem x:Name="MenuToggleAi" Header="AI Чат" InputGesture="Alt+A" />
+            </MenuItem>
+        </Menu>
+
+        <!-- TOOLBAR -->
+        <Border Grid.Row="1" Grid.ColumnSpan="3" Background="#3C3F41" BorderBrush="#515151" BorderThickness="0,0,0,1" Padding="4,2">
+            <StackPanel Orientation="Horizontal" Spacing="2">
+                <Button x:Name="ToolNew" ToolTip.Tip="Новый файл (Ctrl+N)" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="📄" FontSize="14" />
+                </Button>
+                <Button x:Name="ToolOpen" ToolTip.Tip="Открыть (Ctrl+O)" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="📂" FontSize="14" />
+                </Button>
+                <Button x:Name="ToolSave" ToolTip.Tip="Сохранить (Ctrl+S)" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="💾" FontSize="14" />
+                </Button>
+                <Border Width="1" Background="#515151" Margin="4,2" />
+                <Button x:Name="ToolUndo" ToolTip.Tip="Отменить (Ctrl+Z)" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="↩" FontSize="16" />
+                </Button>
+                <Button x:Name="ToolRedo" ToolTip.Tip="Повторить (Ctrl+Y)" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="↪" FontSize="16" />
+                </Button>
+                <Border Width="1" Background="#515151" Margin="4,2" />
+                <TextBlock Text="🔍" FontSize="14" VerticalAlignment="Center" Margin="4,0" Foreground="#BBBBBB" />
+                <TextBlock x:Name="ToolGitBranch" Text="main" FontSize="11" Foreground="#BBBBBB" VerticalAlignment="Center" Margin="0,0,8,0" />
+                <Button x:Name="ToolCommit" ToolTip.Tip="Коммит" Background="Transparent" BorderThickness="0" Padding="6,4" Foreground="#BBBBBB">
+                    <TextBlock Text="✓" FontSize="14" />
+                </Button>
+                <TextBlock x:Name="ToolAiStatus" Text="" FontSize="10" Foreground="#6A9955" VerticalAlignment="Center" Margin="0,0,4,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- LEFT: PROJECT TREE (always visible) -->
+        <Border Grid.Row="2" Grid.Column="0" Background="#2B2B2B" BorderBrush="#515151" BorderThickness="0,0,1,0" Width="250">
+            <Grid RowDefinitions="Auto,Auto,*">
+                <TextBlock Grid.Row="0" Text="ПРОЕКТ" FontSize="11" FontWeight="Bold" Foreground="#646464" Margin="10,8,0,2" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="6,2,6,4">
+                    <Button x:Name="BtnOpenFolder" Content="Открыть папку" Background="#4B6EAF" Foreground="White" CornerRadius="3" Padding="8,3" FontSize="11" />
+                </StackPanel>
+                <TreeView x:Name="TreeView" Grid.Row="2" Background="Transparent" Foreground="#A9B7C6" BorderThickness="0" />
+            </Grid>
+        </Border>
+
+        <!-- CENTER: EDITOR + BOTTOM PANEL -->
+        <Grid Grid.Row="2" Grid.Column="2" RowDefinitions="*,Auto">
+            <!-- EDITOR AREA -->
+            <Grid Grid.Row="0" RowDefinitions="Auto,*">
+                <!-- TABS -->
+                <Border Grid.Row="0" Background="#3C3F41" BorderBrush="#515151" BorderThickness="0,0,0,1" Padding="0,0,0,0">
+                    <StackPanel x:Name="TabsBar" Orientation="Horizontal" />
+                </Border>
+                <!-- EDITOR -->
+                <Grid Grid.Row="1">
+                    <ae:TextEditor x:Name="Editor"
+                                   Background="#2B2B2B" Foreground="#A9B7C6"
+                                   FontFamily="Cascadia Code, Consolas, monospace"
+                                   FontSize="14" ShowLineNumbers="True"
+                                   BorderThickness="0" />
+                    <TextBlock x:Name="Placeholder"
+                               Text="Ctrl+N — новый файл | Ctrl+O — открыть файл | Открой папку слева"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               FontSize="14" Foreground="#646464" TextAlignment="Center" />
+                </Grid>
+            </Grid>
+
+            <!-- BOTTOM PANEL (resize handle) -->
+            <Border Grid.Row="1" Background="#3C3F41" BorderBrush="#515151" BorderThickness="0,1,0,0" Height="4" />
+
+            <!-- BOTTOM PANEL TABS -->
+            <Grid Grid.Row="1" RowDefinitions="Auto,Auto,*" Margin="0,-180,0,0" IsVisible="False" x:Name="BottomPanel">
+                <Border Grid.Row="0" Background="#313335" BorderBrush="#515151" BorderThickness="0,0,0,1">
+                    <StackPanel Orientation="Horizontal" Spacing="0">
+                        <Button x:Name="TabProblems" Content="🔍 Проблемы" Background="Transparent" BorderThickness="0" Padding="12,6" Foreground="#BBBBBB" FontSize="11" />
+                        <Button x:Name="TabAiChat" Content="💬 AI Чат" Background="Transparent" BorderThickness="0" Padding="12,6" Foreground="#BBBBBB" FontSize="11" />
+                        <Button x:Name="TabOutput" Content="📋 Вывод" Background="Transparent" BorderThickness="0" Padding="12,6" Foreground="#BBBBBB" FontSize="11" />
+                        <Button x:Name="TabSettings" Content="⚙ Настройки" Background="Transparent" BorderThickness="0" Padding="12,6" Foreground="#BBBBBB" FontSize="11" />
+                        <Button x:Name="BtnCloseBottom" Content="✕" Background="Transparent" BorderThickness="0" Padding="8,6" Foreground="#646464" FontSize="11" HorizontalAlignment="Right" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Problems -->
+                <Border Grid.Row="1" Background="#313335" BorderBrush="#515151" BorderThickness="0,0,0,1" x:Name="PanelProblems">
+                    <TextBlock x:Name="ProblemsList" Text="Ошибок нет" Foreground="#A9B7C6" FontSize="12" Margin="12,8" />
+                </Border>
+
+                <!-- AI Chat -->
+                <Border Grid.Row="2" Background="#313335" x:Name="PanelAiChat" IsVisible="False">
+                    <Grid RowDefinitions="*,Auto,Auto">
+                        <ListBox x:Name="ChatList" Grid.Row="0" Background="Transparent" Foreground="#A9B7C6" BorderThickness="0" Margin="0,4" />
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="6" Margin="8,0,8,4">
+                            <Button x:Name="ModeAsk" Content="💬 Спросить" Background="#4B6EAF" Foreground="White" CornerRadius="3" Padding="8,4" FontSize="10" />
+                            <Button x:Name="ModeCheck" Content="🔍 Проверить" Background="#3C3F41" Foreground="#BBBBBB" CornerRadius="3" Padding="8,4" FontSize="10" />
+                            <Button x:Name="ModeExplain" Content="📝 Объяснить" Background="#3C3F41" Foreground="#BBBBBB" CornerRadius="3" Padding="8,4" FontSize="10" />
+                            <Button x:Name="ModeFix" Content="🔧 Исправить" Background="#3C3F41" Foreground="#BBBBBB" CornerRadius="3" Padding="8,4" FontSize="10" />
+                        </StackPanel>
+                        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="8,0,8,8">
+                            <TextBox x:Name="ChatInput" Grid.Column="0" PlaceholderText="Спроси что-нибудь..." Background="#3C3F41" Foreground="#A9B7C6" BorderBrush="#515151" BorderThickness="1" CornerRadius="3" Padding="6,4" FontSize="12" />
+                            <Button x:Name="BtnSend" Grid.Column="1" Content="▶" Width="28" Height="28" Background="#4B6EAF" Foreground="White" CornerRadius="3" Margin="6,0,0,0" FontSize="12" />
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <!-- Output -->
+                <Border Grid.Row="2" Background="#313335" x:Name="PanelOutput" IsVisible="False">
+                    <TextBlock x:Name="OutputText" Text="" Foreground="#A9B7C6" FontSize="12" Margin="12,8" />
+                </Border>
+
+                <!-- Settings -->
+                <ScrollViewer Grid.Row="2" Background="#313335" x:Name="PanelSettings" IsVisible="False">
+                    <StackPanel Margin="12,8" Spacing="8">
+                        <TextBlock Text="Настройки Cloudflare AI" FontSize="13" FontWeight="Bold" Foreground="#A9B7C6" />
+                        <TextBlock Text="Account ID:" Foreground="#888" FontSize="11" />
+                        <TextBox x:Name="SetAccountId" Background="#3C3F41" Foreground="#A9B7C6" PlaceholderText="0702b4ef..." BorderBrush="#515151" BorderThickness="1" CornerRadius="3" Padding="6,4" FontSize="12" />
+                        <TextBlock Text="API Token:" Foreground="#888" FontSize="11" />
+                        <TextBox x:Name="SetApiToken" Background="#3C3F41" Foreground="#A9B7C6" PlaceholderText="cfut_..." BorderBrush="#515151" BorderThickness="1" CornerRadius="3" Padding="6,4" FontSize="12" />
+                        <TextBlock Text="Модель для кода:" Foreground="#888" FontSize="11" />
+                        <TextBox x:Name="SetAiModel" Background="#3C3F41" Foreground="#A9B7C6" PlaceholderText="@cf/qwen/qwen2.5-coder-32b-instruct" BorderBrush="#515151" BorderThickness="1" CornerRadius="3" Padding="6,4" FontSize="12" />
+                        <TextBlock Text="Модель для чата:" Foreground="#888" FontSize="11" />
+                        <TextBox x:Name="SetChatModel" Background="#3C3F41" Foreground="#A9B7C6" PlaceholderText="@cf/meta/llama-3.3-70b-instruct-fp8-fast" BorderBrush="#515151" BorderThickness="1" CornerRadius="3" Padding="6,4" FontSize="12" />
+                        <TextBlock Text="Тема подсветки:" Foreground="#888" FontSize="11" />
+                        <ComboBox x:Name="ThemeCombo" Background="#3C3F41" Foreground="#A9B7C6" BorderBrush="#515151" BorderThickness="1" Padding="6,4" FontSize="12" />
+                        <Button x:Name="BtnSaveSettings" Content="Сохранить" Background="#4B6EAF" Foreground="White" CornerRadius="3" Padding="12,6" FontSize="12" Margin="0,4,0,0" />
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+
+        <!-- RIGHT: MINIMAP placeholder -->
+        <Border x:Name="MinimapBorder" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                Background="#2B2B2B" BorderBrush="#515151" BorderThickness="1,0,0,0" Width="80" IsVisible="False">
+            <ScrollViewer>
+                <TextBlock x:Name="MinimapText" Text="" FontFamily="Cascadia Code, Consolas, monospace"
+                           FontSize="2" Foreground="#555555" LineHeight="2.5" TextWrapping="Wrap" />
+            </ScrollViewer>
+        </Border>
+
+        <!-- STATUS BAR -->
+        <Border Grid.Row="4" Grid.ColumnSpan="3" Background="#4B6EAF" Padding="8,2">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+                <TextBlock x:Name="StatusBarLeft" Grid.Column="0" Text="MarkStudio" Foreground="White" FontSize="12" VerticalAlignment="Center" />
+                <TextBlock x:Name="StatusBarCenter" Grid.Column="2" Text="" Foreground="White" FontSize="11" VerticalAlignment="Center" />
+                <TextBlock x:Name="StatusBarRight" Grid.Column="3" Text="Ln 1, Col 1" Foreground="White" FontSize="11" VerticalAlignment="Center" Margin="12,0" />
+                <TextBlock x:Name="StatusBarEncoding" Grid.Column="4" Text="UTF-8" Foreground="White" FontSize="11" VerticalAlignment="Center" Margin="12,0" />
+                <TextBlock x:Name="StatusBarLang" Grid.Column="5" Text="Plain" Foreground="White" FontSize="11" VerticalAlignment="Center" Margin="12,0" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
